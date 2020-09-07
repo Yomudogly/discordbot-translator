@@ -115,42 +115,52 @@ client.on("message", (msg) => {
           {
             name: ":flag_us:",
             value: "!en + text translate to English",
+            inline: true,
           },
           {
             name: ":flag_ru:",
             value: "!ru + text translate to Russian",
+            inline: true,
           },
           {
             name: ":flag_es:",
             value: "!es + text translate to Spanish",
+            inline: true,
           },
           {
             name: ":flag_tr:",
             value: "!tr + text translate to Turkish",
+            inline: true,
           },
           {
             name: ":flag_fr:",
             value: "!fr + text translate to French",
+            inline: true,
           },
           {
             name: ":flag_it:",
             value: "!it + text translate to Italian",
+            inline: true,
           },
           {
             name: ":flag_de:",
             value: "!de + text translate to German",
+            inline: true,
           },
           {
             name: ":flag_sa:",
             value: "!ar + text translate to Arabic",
+            inline: true,
           },
           {
             name: ":flag_jp:",
             value: "!ja + text translate to Japanese",
+            inline: true,
           },
           {
             name: ":flag_in:",
             value: "!hi + text translate to Hindi",
+            inline: true,
           }
         )
         .attachFiles(["./media/translate.jpg"])
