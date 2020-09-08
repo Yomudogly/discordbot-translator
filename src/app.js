@@ -100,7 +100,7 @@ client.on("message", (msg) => {
         msg.delete({ timeout: 7000 });
       });
 
-  if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+  if (!msg.guild || !msg.content.startsWith(prefix) || msg.author.bot) return;
 
   switch (args[0].toLowerCase()) {
     //! Info command
