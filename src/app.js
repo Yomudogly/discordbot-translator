@@ -100,7 +100,11 @@ client.on("message", (msg) => {
         msg.delete({ timeout: 7000 });
       });
 
-  if (!msg.guild || !msg.content.startsWith(prefix) || msg.author.bot) return;
+  if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+  if (!msg.guild)
+    msg.reply(
+      "Personal messages not permitted:face_with_raised_eyebrow:. If you want me to translate something send message in the server:v:"
+    );
 
   switch (args[0].toLowerCase()) {
     //! Info command
