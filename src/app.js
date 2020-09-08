@@ -101,8 +101,14 @@ client.on("message", (msg) => {
       });
 
   if (!msg.content.startsWith(prefix) || msg.author.bot) {
-    return;
-  } else if (!msg.guild || (!msg.guild && !msg.content.startsWith(prefix))) {
+    if (!msg.guild && !msg.author.bot) {
+      return msg.reply(
+        "Personal messages not permitted :face_with_raised_eyebrow: If you want me to translate something send message in the server :v:"
+      );
+    } else {
+      return;
+    }
+  } else if (!msg.guild) {
     return msg.reply(
       "Personal messages not permitted :face_with_raised_eyebrow: If you want me to translate something send message in the server :v:"
     );
