@@ -117,6 +117,8 @@ client.on("message", (msg) => {
     voice: "en-US_AllisonV3Voice",
   };
 
+  let audioFile = synthesizeParams.text.substring(0, 10);
+
   let speakText = (synthesizeParams) =>
     textToSpeech
       .synthesize(synthesizeParams)
@@ -124,8 +126,8 @@ client.on("message", (msg) => {
         return textToSpeech.repairWavHeaderStream(response.result);
       })
       .then((buffer) => {
-        fs.writeFileSync(`./${args[0]}_${msg.author.id}.wav`, buffer);
-        console.log(`file ${args[0]}_${msg.author.id}.wav created`);
+        fs.writeFileSync(`./${audioFile}.wav`, buffer);
+        console.log(`file ${audioFile}.wav created`);
         return;
       })
       .catch((err) => {
@@ -1280,18 +1282,18 @@ client.on("message", (msg) => {
                       msg.author.id
                     )} sent this voice message:`,
                     {
-                      files: [`./${args[0]}_${msg.author.id}.wav`],
+                      files: [`./${audioFile}.wav`],
                     }
                   )
                   .then(() => {
-                    fs.unlink(`./${args[0]}_${msg.author.id}.wav`, (err) => {
+                    fs.unlink(`./${audioFile}.wav`, (err) => {
                       if (err) {
                         console.error(err);
                         return;
                       }
                       //file removed
                     });
-                    console.log(`file ${args[0]}_${msg.author.id}.wav deleted`);
+                    console.log(`file ${audioFile}.wav deleted`);
                   });
               })
               .catch((err) => {
@@ -1325,23 +1327,18 @@ client.on("message", (msg) => {
                           msg.author.id
                         )} sent message with audio transcription :flag_us: "${text}"`,
                         {
-                          files: [`./${args[0]}_${msg.author.id}.wav`],
+                          files: [`./${audioFile}.wav`],
                         }
                       )
                       .then(() => {
-                        fs.unlink(
-                          `./${args[0]}_${msg.author.id}.wav`,
-                          (err) => {
-                            if (err) {
-                              console.error(err);
-                              return;
-                            }
-                            //file removed
+                        fs.unlink(`./${audioFile}.wav`, (err) => {
+                          if (err) {
+                            console.error(err);
+                            return;
                           }
-                        );
-                        console.log(
-                          `file ${args[0]}_${msg.author.id}.wav deleted`
-                        );
+                          //file removed
+                        });
+                        console.log(`file ${audioFile}.wav deleted`);
                       });
                   })
                   .catch((err) => {
