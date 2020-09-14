@@ -124,8 +124,8 @@ client.on("message", (msg) => {
         return textToSpeech.repairWavHeaderStream(response.result);
       })
       .then((buffer) => {
-        fs.writeFileSync(`./${args[0]}_${args[1]}_${args[2]}.wav`, buffer);
-        console.log(`file ${args[0]}_${args[1]}_${args[2]}.wav created`);
+        fs.writeFileSync(`./${args[0]}_${msg.author.id}.wav`, buffer);
+        console.log(`file ${args[0]}_${msg.author.id}.wav created`);
         return;
       })
       .catch((err) => {
@@ -1280,23 +1280,18 @@ client.on("message", (msg) => {
                       msg.author.id
                     )} sent this voice message:`,
                     {
-                      files: [`./${args[0]}_${args[1]}_${args[2]}.wav`],
+                      files: [`./${args[0]}_${msg.author.id}.wav`],
                     }
                   )
                   .then(() => {
-                    fs.unlink(
-                      `./${args[0]}_${args[1]}_${args[2]}.wav`,
-                      (err) => {
-                        if (err) {
-                          console.error(err);
-                          return;
-                        }
-                        //file removed
+                    fs.unlink(`./${args[0]}_${msg.author.id}.wav`, (err) => {
+                      if (err) {
+                        console.error(err);
+                        return;
                       }
-                    );
-                    console.log(
-                      `file ${args[0]}_${args[1]}_${args[2]}.wav deleted`
-                    );
+                      //file removed
+                    });
+                    console.log(`file ${args[0]}_${msg.author.id}.wav deleted`);
                   });
               })
               .catch((err) => {
@@ -1330,12 +1325,12 @@ client.on("message", (msg) => {
                           msg.author.id
                         )} sent message with audio transcription :flag_us: "${text}"`,
                         {
-                          files: [`./${args[0]}_${args[1]}_${args[2]}.wav`],
+                          files: [`./${args[0]}_${msg.author.id}.wav`],
                         }
                       )
                       .then(() => {
                         fs.unlink(
-                          `./${args[0]}_${args[1]}_${args[2]}.wav`,
+                          `./${args[0]}_${msg.author.id}.wav`,
                           (err) => {
                             if (err) {
                               console.error(err);
@@ -1345,7 +1340,7 @@ client.on("message", (msg) => {
                           }
                         );
                         console.log(
-                          `file ${args[0]}_${args[1]}_${args[2]}.wav deleted`
+                          `file ${args[0]}_${msg.author.id}.wav deleted`
                         );
                       });
                   })
