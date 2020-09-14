@@ -1330,13 +1330,13 @@ client.on("message", (msg) => {
                         )} sent message with audio transcription :flag_us: "${text}"`,
                         {
                           files: [
-                            `./voice/${args[0]}_${args[1]}_${args[2]}_${args[3]}.wav`,
+                            `./voice/${args[0]}_${args[1]}_${args[2]}.wav`,
                           ],
                         }
                       )
                       .then(() => {
                         fs.unlink(
-                          `./voice/${args[0]}_${args[1]}_${args[2]}_${args[3]}.wav`,
+                          `./voice/${args[0]}_${args[1]}_${args[2]}.wav`,
                           (err) => {
                             if (err) {
                               console.error(err);
