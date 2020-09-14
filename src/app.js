@@ -1271,7 +1271,7 @@ client.on("message", (msg) => {
 
       detectLanguage()
         .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
+          if (lang == "en") {
             synthesizeParams.text = args.slice(1).join(" ");
             audioPath = `./${synthesizeParams.text
               .substring(0, 10)
