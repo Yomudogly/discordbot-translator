@@ -1,12 +1,14 @@
 // ? Require packages
 require("dotenv").config();
 const Discord = require("discord.js");
+const fs = require("fs");
 
 //* Create a new client using the new keyword
 const client = new Discord.Client();
 
-//* Register IBM Translator API
+//* Register IBM Translator API and Text-To-Speech API
 const LanguageTranslatorV3 = require("ibm-watson/language-translator/v3");
+const TextToSpeechV1 = require("ibm-watson/text-to-speech/v1");
 const { IamAuthenticator } = require("ibm-watson/auth");
 
 const languageTranslator = new LanguageTranslatorV3({
@@ -15,6 +17,14 @@ const languageTranslator = new LanguageTranslatorV3({
     apikey: process.env.APIKEY,
   }),
   serviceUrl: process.env.URL,
+  disableSslVerification: true,
+});
+
+const textToSpeech = new TextToSpeechV1({
+  authenticator: new IamAuthenticator({
+    apikey: process.env.SPEECHKEY,
+  }),
+  serviceUrl: process.env.SPEECHURL,
   disableSslVerification: true,
 });
 
@@ -33,6 +43,7 @@ const commands = [
   "ar",
   "ja",
   "hi",
+  "speech-en",
 ];
 
 //* Display a message once the bot has started
@@ -98,6 +109,30 @@ client.on("message", (msg) => {
       .reply("I'm sorry, I can't translate your message :pleading_face:")
       .then((msg) => {
         msg.delete({ timeout: 7000 });
+      });
+
+  let synthesizeParams = {
+    text: "",
+    accept: "audio/wav",
+    voice: "en-US_AllisonV3Voice",
+  };
+
+  let speakText = (synthesizeParams) =>
+    textToSpeech
+      .synthesize(synthesizeParams)
+      .then((response) => {
+        return textToSpeech.repairWavHeaderStream(response.result);
+      })
+      .then((buffer) => {
+        fs.writeFileSync(
+          `./voice/${args[0]}_${args[1]}_${args[2]}_${args[3]}.wav`,
+          buffer
+        );
+        return;
+      })
+      .catch((err) => {
+        console.log("error:", err);
+        return;
       });
 
   if (!msg.content.startsWith(prefix) || msg.author.bot) {
@@ -1217,6 +1252,106 @@ client.on("message", (msg) => {
                   .catch((err) => {
                     console.log("error:", err);
                     notTranslated();
+                  });
+              }
+            })
+            .catch((err) => {
+              console.log("error:", err);
+              notTranslated();
+            });
+        })
+        .catch((err) => {
+          console.log("error:", err);
+          notTranslated();
+        });
+      break;
+    //! SPEECH-EN
+    case commands[11]:
+      msg.channel.bulkDelete(1);
+
+      detectLanguage()
+        .then((lang) => {
+          if (lang == args[0].toLowerCase()) {
+            synthesizeParams.text = args.slice(1).join(" ");
+
+            speakText(synthesizeParams)
+              .then(() => {
+                msg.channel
+                  .send(
+                    `${msg.guild.member(
+                      msg.author.id
+                    )} sent this voice message:`,
+                    {
+                      files: [
+                        `./voice/${args[0]}_${args[1]}_${args[2]}_${args[3]}.wav`,
+                      ],
+                    }
+                  )
+                  .then(() => {
+                    fs.unlink(
+                      `./voice/${args[0]}_${args[1]}_${args[2]}_${args[3]}.wav`,
+                      (err) => {
+                        if (err) {
+                          console.error(err);
+                          return;
+                        }
+                        //file removed
+                      }
+                    );
+                  });
+              })
+              .catch((err) => {
+                console.log("error:", err);
+              });
+            return;
+          }
+          translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
+
+          translateText(translateParams)
+            .then((text) => {
+              if (text == args.slice(1).join(" ")) {
+                console.log(`
+            translate query ${lang}: ${args.slice(1).join(" ")}
+            translate result ${args[0].toLowerCase()}: ${text}
+            `);
+                notTranslated();
+              } else {
+                console.log(`
+            translate query ${lang}: ${args.slice(1).join(" ")}
+            translate result ${args[0].toLowerCase()}: ${text}
+            `);
+
+                synthesizeParams.text = text;
+
+                speakText(synthesizeParams)
+                  .then(() => {
+                    msg.channel
+                      .send(
+                        `${msg.guild.member(
+                          msg.author.id
+                        )} sent message with audio transcription :flag_us: "${text}"`,
+                        {
+                          files: [
+                            `./voice/${args[0]}_${args[1]}_${args[2]}_${args[3]}.wav`,
+                          ],
+                        }
+                      )
+                      .then(() => {
+                        fs.unlink(
+                          `./voice/${args[0]}_${args[1]}_${args[2]}_${args[3]}.wav`,
+                          (err) => {
+                            if (err) {
+                              console.error(err);
+                              return;
+                            }
+                            //file removed
+                          }
+                        );
+                      });
+                  })
+                  .catch((err) => {
+                    console.log("error:", err);
+                    notVoice();
                   });
               }
             })
