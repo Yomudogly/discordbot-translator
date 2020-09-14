@@ -117,8 +117,6 @@ client.on("message", (msg) => {
     voice: "en-US_AllisonV3Voice",
   };
 
-  let audioFile = synthesizeParams.text.substring(0, 10);
-
   let speakText = (synthesizeParams) =>
     textToSpeech
       .synthesize(synthesizeParams)
@@ -126,8 +124,13 @@ client.on("message", (msg) => {
         return textToSpeech.repairWavHeaderStream(response.result);
       })
       .then((buffer) => {
-        fs.writeFileSync(`./${audioFile}.wav`, buffer);
-        console.log(`file ${audioFile}.wav created`);
+        fs.writeFileSync(
+          `./${synthesizeParams.text.substring(0, 10)}.wav`,
+          buffer
+        );
+        console.log(
+          `file ${synthesizeParams.text.substring(0, 10)}.wav created`
+        );
         return;
       })
       .catch((err) => {
@@ -1282,18 +1285,28 @@ client.on("message", (msg) => {
                       msg.author.id
                     )} sent this voice message:`,
                     {
-                      files: [`./${audioFile}.wav`],
+                      files: [
+                        `./${synthesizeParams.text.substring(0, 10)}.wav`,
+                      ],
                     }
                   )
                   .then(() => {
-                    fs.unlink(`./${audioFile}.wav`, (err) => {
-                      if (err) {
-                        console.error(err);
-                        return;
+                    fs.unlink(
+                      `./${synthesizeParams.text.substring(0, 10)}.wav`,
+                      (err) => {
+                        if (err) {
+                          console.error(err);
+                          return;
+                        }
+                        //file removed
                       }
-                      //file removed
-                    });
-                    console.log(`file ${audioFile}.wav deleted`);
+                    );
+                    console.log(
+                      `file ${synthesizeParams.text.substring(
+                        0,
+                        10
+                      )}.wav deleted`
+                    );
                   });
               })
               .catch((err) => {
@@ -1327,18 +1340,28 @@ client.on("message", (msg) => {
                           msg.author.id
                         )} sent message with audio transcription :flag_us: "${text}"`,
                         {
-                          files: [`./${audioFile}.wav`],
+                          files: [
+                            `./${synthesizeParams.text.substring(0, 10)}.wav`,
+                          ],
                         }
                       )
                       .then(() => {
-                        fs.unlink(`./${audioFile}.wav`, (err) => {
-                          if (err) {
-                            console.error(err);
-                            return;
+                        fs.unlink(
+                          `./${synthesizeParams.text.substring(0, 10)}.wav`,
+                          (err) => {
+                            if (err) {
+                              console.error(err);
+                              return;
+                            }
+                            //file removed
                           }
-                          //file removed
-                        });
-                        console.log(`file ${audioFile}.wav deleted`);
+                        );
+                        console.log(
+                          `file ${synthesizeParams.text.substring(
+                            0,
+                            10
+                          )}.wav deleted`
+                        );
                       });
                   })
                   .catch((err) => {
