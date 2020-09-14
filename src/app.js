@@ -125,7 +125,7 @@ client.on("message", (msg) => {
       })
       .then((buffer) => {
         fs.writeFileSync(
-          `./voice/${args[0]}_${args[1]}_${args[2]}_${args[3]}.wav`,
+          `./voice/${args[0]}_${args[1]}_${args[2]}.wav`,
           buffer
         );
         return;
@@ -1282,14 +1282,12 @@ client.on("message", (msg) => {
                       msg.author.id
                     )} sent this voice message:`,
                     {
-                      files: [
-                        `./voice/${args[0]}_${args[1]}_${args[2]}_${args[3]}.wav`,
-                      ],
+                      files: [`./voice/${args[0]}_${args[1]}_${args[2]}.wav`],
                     }
                   )
                   .then(() => {
                     fs.unlink(
-                      `./voice/${args[0]}_${args[1]}_${args[2]}_${args[3]}.wav`,
+                      `./voice/${args[0]}_${args[1]}_${args[2]}.wav`,
                       (err) => {
                         if (err) {
                           console.error(err);
@@ -1305,20 +1303,20 @@ client.on("message", (msg) => {
               });
             return;
           }
-          translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
+          translateParams.modelId = `${lang}-en`;
 
           translateText(translateParams)
             .then((text) => {
               if (text == args.slice(1).join(" ")) {
                 console.log(`
             translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
+            translate result en: ${text}
             `);
                 notTranslated();
               } else {
                 console.log(`
             translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
+            translate result en: ${text}
             `);
 
                 synthesizeParams.text = text;
