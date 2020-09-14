@@ -117,20 +117,17 @@ client.on("message", (msg) => {
     voice: "en-US_AllisonV3Voice",
   };
 
-  let speakText = (synthesizeParams) =>
+  let audioPath = "";
+
+  let speakText = (synthesizeParams, audioPath) =>
     textToSpeech
       .synthesize(synthesizeParams)
       .then((response) => {
         return textToSpeech.repairWavHeaderStream(response.result);
       })
       .then((buffer) => {
-        fs.writeFileSync(
-          `./${synthesizeParams.text.substring(0, 10)}.wav`,
-          buffer
-        );
-        console.log(
-          `file ${synthesizeParams.text.substring(0, 10)}.wav created`
-        );
+        fs.writeFileSync(audioPath, buffer);
+        console.log(`file ${audioPath} created`);
         return;
       })
       .catch((err) => {
@@ -1276,8 +1273,11 @@ client.on("message", (msg) => {
         .then((lang) => {
           if (lang == args[0].toLowerCase()) {
             synthesizeParams.text = args.slice(1).join(" ");
-
-            speakText(synthesizeParams)
+            audioPath = `./${synthesizeParams.text
+              .substring(0, 10)
+              .split(" ")
+              .join("_")}.wav`;
+            speakText(synthesizeParams, audioPath)
               .then(() => {
                 msg.channel
                   .send(
@@ -1285,28 +1285,18 @@ client.on("message", (msg) => {
                       msg.author.id
                     )} sent this voice message:`,
                     {
-                      files: [
-                        `./${synthesizeParams.text.substring(0, 10)}.wav`,
-                      ],
+                      files: [audioPath],
                     }
                   )
                   .then(() => {
-                    fs.unlink(
-                      `./${synthesizeParams.text.substring(0, 10)}.wav`,
-                      (err) => {
-                        if (err) {
-                          console.error(err);
-                          return;
-                        }
-                        //file removed
+                    fs.unlink(audioPath, (err) => {
+                      if (err) {
+                        console.error(err);
+                        return;
                       }
-                    );
-                    console.log(
-                      `file ${synthesizeParams.text.substring(
-                        0,
-                        10
-                      )}.wav deleted`
-                    );
+                      //file removed
+                    });
+                    console.log(`file ${audioPath} deleted`);
                   });
               })
               .catch((err) => {
@@ -1331,8 +1321,11 @@ client.on("message", (msg) => {
             `);
 
                 synthesizeParams.text = text;
-
-                speakText(synthesizeParams)
+                audioPath = `./${synthesizeParams.text
+                  .substring(0, 10)
+                  .split(" ")
+                  .join("_")}.wav`;
+                speakText(synthesizeParams, audioPath)
                   .then(() => {
                     msg.channel
                       .send(
@@ -1340,28 +1333,18 @@ client.on("message", (msg) => {
                           msg.author.id
                         )} sent message with audio transcription :flag_us: "${text}"`,
                         {
-                          files: [
-                            `./${synthesizeParams.text.substring(0, 10)}.wav`,
-                          ],
+                          files: [audioPath],
                         }
                       )
                       .then(() => {
-                        fs.unlink(
-                          `./${synthesizeParams.text.substring(0, 10)}.wav`,
-                          (err) => {
-                            if (err) {
-                              console.error(err);
-                              return;
-                            }
-                            //file removed
+                        fs.unlink(audioPath, (err) => {
+                          if (err) {
+                            console.error(err);
+                            return;
                           }
-                        );
-                        console.log(
-                          `file ${synthesizeParams.text.substring(
-                            0,
-                            10
-                          )}.wav deleted`
-                        );
+                          //file removed
+                        });
+                        console.log(`file ${audioPath} deleted`);
                       });
                   })
                   .catch((err) => {
