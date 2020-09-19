@@ -600,6 +600,7 @@ client.on("message", (msg) => {
       //   .then((msg) => {
       //     msg.delete({ timeout: 7000 });
       //   });
+      console.warn(`Out of range command detected !${args[0]}`);
       return;
   }
 });
