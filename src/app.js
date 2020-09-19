@@ -343,7 +343,7 @@ client.on("message", (msg) => {
           },
           {
             name: ":flag_ua:",
-            value: "!uk + text translate to Chinese(Simplified)",
+            value: "!uk + text translate to Ukrainian",
             inline: true,
           },
           {
