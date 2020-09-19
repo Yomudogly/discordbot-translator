@@ -251,14 +251,14 @@ client.on("message", (msg) => {
   if (!msg.content.startsWith(prefix) || msg.author.bot) {
     if (!msg.guild && !msg.author.bot) {
       return msg.reply(
-        "Personal messages not permitted :face_with_raised_eyebrow: If you want me to translate something send message in the server :v:"
+        "Personal messages are not permitted :face_with_raised_eyebrow: If you want me to translate something send message in the server :v:"
       );
     } else {
       return;
     }
   } else if (!msg.guild) {
     return msg.reply(
-      "Personal messages not permitted :face_with_raised_eyebrow: If you want me to translate something send message in the server :v:"
+      "Personal messages are not permitted :face_with_raised_eyebrow: If you want me to translate something send message in the server :v:"
     );
   }
   switch (args[0].toLowerCase()) {
