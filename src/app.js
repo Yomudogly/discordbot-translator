@@ -317,9 +317,9 @@ client.on("message", (msg) => {
             inline: true,
           },
           {
-            name: ":loudspeaker::flag_us:",
+            name: ":loudspeaker: :flag_us:",
             value: "!speech-en + text to translate and vocalize in English",
-            inline: true,
+            inline: false,
           }
         )
         .attachFiles(["./media/translate.jpg"])
