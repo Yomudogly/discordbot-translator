@@ -111,6 +111,114 @@ client.on("message", (msg) => {
         msg.delete({ timeout: 7000 });
       });
 
+  let masterTranslator = (flag) =>
+    detectLanguage()
+      .then((lang) => {
+        if (lang == args[0].toLowerCase()) {
+          msg
+            .reply(
+              ` ${flag} => ${flag} = :see_no_evil: :hear_no_evil: :speak_no_evil:`
+            )
+            .then((msg) => {
+              msg.delete({ timeout: 7000 });
+            });
+          return;
+        }
+        detectModel()
+          .then((models) => {
+            translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
+
+            let modelId = models.filter((model) => {
+              return model.model_id == translateParams.modelId;
+            });
+
+            if (modelId.length > 0) {
+              translateText(translateParams)
+                .then((text) => {
+                  if (text == args.slice(1).join(" ")) {
+                    console.log(`
+          translate query ${lang}: ${args.slice(1).join(" ")}
+          translate result ${args[0].toLowerCase()}: ${text}
+          `);
+                    notTranslated();
+                  } else {
+                    console.log(`
+          translate query ${lang}: ${args.slice(1).join(" ")}
+          translate result ${args[0].toLowerCase()}: ${text}
+          `);
+                    msg.channel.send(
+                      `${msg.guild.member(
+                        msg.author.id
+                      )} sent message ${flag} "${text}"`
+                    );
+                  }
+                })
+                .catch((err) => {
+                  console.log("error:", err);
+                  notTranslated();
+                });
+            } else {
+              translateParams.modelId = `${lang}-en`;
+
+              translateText(translateParams)
+                .then((text) => {
+                  if (text == args.slice(1).join(" ")) {
+                    console.log(`
+          translate query ${lang}: ${args.slice(1).join(" ")}
+          translate result en: ${text}
+          `);
+                    notTranslated();
+                  } else {
+                    console.log(`
+          I iteration translate query ${lang}: ${args.slice(1).join(" ")}
+          I iteration translate result en: ${text}
+          `);
+
+                    translateParams.modelId = `en-${args[0].toLowerCase()}`;
+                    translateParams.text = text;
+
+                    translateText(translateParams)
+                      .then((res) => {
+                        if (res == text) {
+                          console.log(`
+          II iteration translate query en: ${text}
+          II iteration translate result ${args[0].toLowerCase()}: ${res}
+          `);
+                          notTranslated();
+                        } else {
+                          console.log(`
+          II iteration translate query en: ${text}
+          II iteration translate result ${args[0].toLowerCase()}: ${res}
+          `);
+                          msg.channel.send(
+                            `${msg.guild.member(
+                              msg.author.id
+                            )} sent message ${flag} "${res}"`
+                          );
+                        }
+                      })
+                      .catch((err) => {
+                        console.log("error:", err);
+                        notTranslated();
+                      });
+                  }
+                })
+                .catch((err) => {
+                  console.log("error:", err);
+                  notTranslated();
+                });
+            }
+          })
+          .catch((err) => {
+            console.log("error:", err);
+            notTranslated();
+          });
+      })
+      .catch((err) => {
+        console.log("error:", err);
+        notTranslated();
+      });
+
   let synthesizeParams = {
     text: "",
     accept: "audio/wav",
@@ -207,6 +315,11 @@ client.on("message", (msg) => {
             name: ":flag_in:",
             value: "!hi + text translate to Hindi",
             inline: true,
+          },
+          {
+            name: ":loudspeaker::flag_us:",
+            value: "!speech-en + text to translate and vocalize in English",
+            inline: true,
           }
         )
         .attachFiles(["./media/translate.jpg"])
@@ -269,1001 +382,56 @@ client.on("message", (msg) => {
     //! RU
     case commands[2]:
       msg.channel.bulkDelete(1);
+      masterTranslator(":flag_ru:");
 
-      detectLanguage()
-        .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
-            msg
-              .reply(
-                ":flag_ru: => :flag_ru: = :see_no_evil: :hear_no_evil: :speak_no_evil:"
-              )
-              .then((msg) => {
-                msg.delete({ timeout: 7000 });
-              });
-            return;
-          }
-          detectModel()
-            .then((models) => {
-              translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
-
-              let modelId = models.filter((model) => {
-                return model.model_id == translateParams.modelId;
-              });
-
-              if (modelId.length > 0) {
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      msg.channel.send(
-                        `${msg.guild.member(
-                          msg.author.id
-                        )} sent message :flag_ru: "${text}"`
-                      );
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              } else {
-                translateParams.modelId = `${lang}-en`;
-
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result en: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            I iteration translate query ${lang}: ${args.slice(1).join(" ")}
-            I iteration translate result en: ${text}
-            `);
-
-                      translateParams.modelId = `en-${args[0].toLowerCase()}`;
-                      translateParams.text = text;
-
-                      translateText(translateParams)
-                        .then((res) => {
-                          if (res == text) {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            notTranslated();
-                          } else {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            msg.channel.send(
-                              `${msg.guild.member(
-                                msg.author.id
-                              )} sent message :flag_ru: "${res}"`
-                            );
-                          }
-                        })
-                        .catch((err) => {
-                          console.log("error:", err);
-                          notTranslated();
-                        });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log("error:", err);
-              notTranslated();
-            });
-        })
-        .catch((err) => {
-          console.log("error:", err);
-          notTranslated();
-        });
       break;
     //! ES
     case commands[3]:
       msg.channel.bulkDelete(1);
+      masterTranslator(":flag_es:");
 
-      detectLanguage()
-        .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
-            msg
-              .reply(
-                ":flag_es: => :flag_es: = :see_no_evil: :hear_no_evil: :speak_no_evil:"
-              )
-              .then((msg) => {
-                msg.delete({ timeout: 7000 });
-              });
-            return;
-          }
-          detectModel()
-            .then((models) => {
-              translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
-
-              let modelId = models.filter((model) => {
-                return model.model_id == translateParams.modelId;
-              });
-
-              if (modelId.length > 0) {
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      msg.channel.send(
-                        `${msg.guild.member(
-                          msg.author.id
-                        )} sent message :flag_es: "${text}"`
-                      );
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              } else {
-                translateParams.modelId = `${lang}-en`;
-
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result en: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            I iteration translate query ${lang}: ${args.slice(1).join(" ")}
-            I iteration translate result en: ${text}
-            `);
-
-                      translateParams.modelId = `en-${args[0].toLowerCase()}`;
-                      translateParams.text = text;
-
-                      translateText(translateParams)
-                        .then((res) => {
-                          if (res == text) {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            notTranslated();
-                          } else {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            msg.channel.send(
-                              `${msg.guild.member(
-                                msg.author.id
-                              )} sent message :flag_es: "${res}"`
-                            );
-                          }
-                        })
-                        .catch((err) => {
-                          console.log("error:", err);
-                          notTranslated();
-                        });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log("error:", err);
-              notTranslated();
-            });
-        })
-        .catch((err) => {
-          console.log("error:", err);
-          notTranslated();
-        });
       break;
     //! TR
     case commands[4]:
       msg.channel.bulkDelete(1);
+      masterTranslator(":flag_tr:");
 
-      detectLanguage()
-        .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
-            msg
-              .reply(
-                ":flag_tr: => :flag_tr: = :see_no_evil: :hear_no_evil: :speak_no_evil:"
-              )
-              .then((msg) => {
-                msg.delete({ timeout: 7000 });
-              });
-            return;
-          }
-          detectModel()
-            .then((models) => {
-              translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
-
-              let modelId = models.filter((model) => {
-                return model.model_id == translateParams.modelId;
-              });
-
-              if (modelId.length > 0) {
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      msg.channel.send(
-                        `${msg.guild.member(
-                          msg.author.id
-                        )} sent message :flag_tr: "${text}"`
-                      );
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              } else {
-                translateParams.modelId = `${lang}-en`;
-
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result en: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            I iteration translate query ${lang}: ${args.slice(1).join(" ")}
-            I iteration translate result en: ${text}
-            `);
-
-                      translateParams.modelId = `en-${args[0].toLowerCase()}`;
-                      translateParams.text = text;
-
-                      translateText(translateParams)
-                        .then((res) => {
-                          if (res == text) {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            notTranslated();
-                          } else {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            msg.channel.send(
-                              `${msg.guild.member(
-                                msg.author.id
-                              )} sent message :flag_tr: "${res}"`
-                            );
-                          }
-                        })
-                        .catch((err) => {
-                          console.log("error:", err);
-                          notTranslated();
-                        });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log("error:", err);
-              notTranslated();
-            });
-        })
-        .catch((err) => {
-          console.log("error:", err);
-          notTranslated();
-        });
       break;
     //! FR
     case commands[5]:
       msg.channel.bulkDelete(1);
+      masterTranslator(":flag_fr:");
 
-      detectLanguage()
-        .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
-            msg
-              .reply(
-                ":flag_fr: => :flag_fr: = :see_no_evil: :hear_no_evil: :speak_no_evil:"
-              )
-              .then((msg) => {
-                msg.delete({ timeout: 7000 });
-              });
-            return;
-          }
-          detectModel()
-            .then((models) => {
-              translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
-
-              let modelId = models.filter((model) => {
-                return model.model_id == translateParams.modelId;
-              });
-
-              if (modelId.length > 0) {
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      msg.channel.send(
-                        `${msg.guild.member(
-                          msg.author.id
-                        )} sent message :flag_fr: "${text}"`
-                      );
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              } else {
-                translateParams.modelId = `${lang}-en`;
-
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result en: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            I iteration translate query ${lang}: ${args.slice(1).join(" ")}
-            I iteration translate result en: ${text}
-            `);
-
-                      translateParams.modelId = `en-${args[0].toLowerCase()}`;
-                      translateParams.text = text;
-
-                      translateText(translateParams)
-                        .then((res) => {
-                          if (res == text) {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            notTranslated();
-                          } else {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            msg.channel.send(
-                              `${msg.guild.member(
-                                msg.author.id
-                              )} sent message :flag_fr: "${res}"`
-                            );
-                          }
-                        })
-                        .catch((err) => {
-                          console.log("error:", err);
-                          notTranslated();
-                        });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log("error:", err);
-              notTranslated();
-            });
-        })
-        .catch((err) => {
-          console.log("error:", err);
-          notTranslated();
-        });
       break;
     //! IT
     case commands[6]:
       msg.channel.bulkDelete(1);
+      masterTranslator(":flag_it:");
 
-      detectLanguage()
-        .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
-            msg
-              .reply(
-                ":flag_it: => :flag_it: = :see_no_evil: :hear_no_evil: :speak_no_evil:"
-              )
-              .then((msg) => {
-                msg.delete({ timeout: 7000 });
-              });
-            return;
-          }
-          detectModel()
-            .then((models) => {
-              translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
-
-              let modelId = models.filter((model) => {
-                return model.model_id == translateParams.modelId;
-              });
-
-              if (modelId.length > 0) {
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      msg.channel.send(
-                        `${msg.guild.member(
-                          msg.author.id
-                        )} sent message :flag_it: "${text}"`
-                      );
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              } else {
-                translateParams.modelId = `${lang}-en`;
-
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result en: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            I iteration translate query ${lang}: ${args.slice(1).join(" ")}
-            I iteration translate result en: ${text}
-            `);
-
-                      translateParams.modelId = `en-${args[0].toLowerCase()}`;
-                      translateParams.text = text;
-
-                      translateText(translateParams)
-                        .then((res) => {
-                          if (res == text) {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            notTranslated();
-                          } else {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            msg.channel.send(
-                              `${msg.guild.member(
-                                msg.author.id
-                              )} sent message :flag_it: "${res}"`
-                            );
-                          }
-                        })
-                        .catch((err) => {
-                          console.log("error:", err);
-                          notTranslated();
-                        });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log("error:", err);
-              notTranslated();
-            });
-        })
-        .catch((err) => {
-          console.log("error:", err);
-          notTranslated();
-        });
       break;
     //! DE
     case commands[7]:
       msg.channel.bulkDelete(1);
+      masterTranslator(":flag_de:");
 
-      detectLanguage()
-        .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
-            msg
-              .reply(
-                ":flag_de: => :flag_de: = :see_no_evil: :hear_no_evil: :speak_no_evil:"
-              )
-              .then((msg) => {
-                msg.delete({ timeout: 7000 });
-              });
-            return;
-          }
-          detectModel()
-            .then((models) => {
-              translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
-
-              let modelId = models.filter((model) => {
-                return model.model_id == translateParams.modelId;
-              });
-
-              if (modelId.length > 0) {
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      msg.channel.send(
-                        `${msg.guild.member(
-                          msg.author.id
-                        )} sent message :flag_de: "${text}"`
-                      );
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              } else {
-                translateParams.modelId = `${lang}-en`;
-
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result en: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            I iteration translate query ${lang}: ${args.slice(1).join(" ")}
-            I iteration translate result en: ${text}
-            `);
-
-                      translateParams.modelId = `en-${args[0].toLowerCase()}`;
-                      translateParams.text = text;
-
-                      translateText(translateParams)
-                        .then((res) => {
-                          if (res == text) {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            notTranslated();
-                          } else {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            msg.channel.send(
-                              `${msg.guild.member(
-                                msg.author.id
-                              )} sent message :flag_de: "${res}"`
-                            );
-                          }
-                        })
-                        .catch((err) => {
-                          console.log("error:", err);
-                          notTranslated();
-                        });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log("error:", err);
-              notTranslated();
-            });
-        })
-        .catch((err) => {
-          console.log("error:", err);
-          notTranslated();
-        });
       break;
     //! AR
     case commands[8]:
       msg.channel.bulkDelete(1);
+      masterTranslator(":flag_sa:");
 
-      detectLanguage()
-        .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
-            msg
-              .reply(
-                ":flag_sa: => :flag_sa: = :see_no_evil: :hear_no_evil: :speak_no_evil:"
-              )
-              .then((msg) => {
-                msg.delete({ timeout: 7000 });
-              });
-            return;
-          }
-          detectModel()
-            .then((models) => {
-              translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
-
-              let modelId = models.filter((model) => {
-                return model.model_id == translateParams.modelId;
-              });
-
-              if (modelId.length > 0) {
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      msg.channel.send(
-                        `${msg.guild.member(
-                          msg.author.id
-                        )} sent message :flag_sa: "${text}"`
-                      );
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              } else {
-                translateParams.modelId = `${lang}-en`;
-
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result en: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            I iteration translate query ${lang}: ${args.slice(1).join(" ")}
-            I iteration translate result en: ${text}
-            `);
-
-                      translateParams.modelId = `en-${args[0].toLowerCase()}`;
-                      translateParams.text = text;
-
-                      translateText(translateParams)
-                        .then((res) => {
-                          if (res == text) {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            notTranslated();
-                          } else {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            msg.channel.send(
-                              `${msg.guild.member(
-                                msg.author.id
-                              )} sent message :flag_sa: "${res}"`
-                            );
-                          }
-                        })
-                        .catch((err) => {
-                          console.log("error:", err);
-                          notTranslated();
-                        });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log("error:", err);
-              notTranslated();
-            });
-        })
-        .catch((err) => {
-          console.log("error:", err);
-          notTranslated();
-        });
       break;
     //! JA
     case commands[9]:
       msg.channel.bulkDelete(1);
+      masterTranslator(":flag_jp:");
 
-      detectLanguage()
-        .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
-            msg
-              .reply(
-                ":flag_jp: => :flag_jp: = :see_no_evil: :hear_no_evil: :speak_no_evil:"
-              )
-              .then((msg) => {
-                msg.delete({ timeout: 7000 });
-              });
-            return;
-          }
-          detectModel()
-            .then((models) => {
-              translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
-
-              let modelId = models.filter((model) => {
-                return model.model_id == translateParams.modelId;
-              });
-
-              if (modelId.length > 0) {
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      msg.channel.send(
-                        `${msg.guild.member(
-                          msg.author.id
-                        )} sent message :flag_jp: "${text}"`
-                      );
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              } else {
-                translateParams.modelId = `${lang}-en`;
-
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result en: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            I iteration translate query ${lang}: ${args.slice(1).join(" ")}
-            I iteration translate result en: ${text}
-            `);
-
-                      translateParams.modelId = `en-${args[0].toLowerCase()}`;
-                      translateParams.text = text;
-
-                      translateText(translateParams)
-                        .then((res) => {
-                          if (res == text) {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            notTranslated();
-                          } else {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            msg.channel.send(
-                              `${msg.guild.member(
-                                msg.author.id
-                              )} sent message :flag_jp: "${res}"`
-                            );
-                          }
-                        })
-                        .catch((err) => {
-                          console.log("error:", err);
-                          notTranslated();
-                        });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log("error:", err);
-              notTranslated();
-            });
-        })
-        .catch((err) => {
-          console.log("error:", err);
-          notTranslated();
-        });
       break;
     //! HI
     case commands[10]:
       msg.channel.bulkDelete(1);
+      masterTranslator(":flag_in:");
 
-      detectLanguage()
-        .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
-            msg
-              .reply(
-                ":flag_in: => :flag_in: = :see_no_evil: :hear_no_evil: :speak_no_evil:"
-              )
-              .then((msg) => {
-                msg.delete({ timeout: 7000 });
-              });
-            return;
-          }
-          detectModel()
-            .then((models) => {
-              translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
-
-              let modelId = models.filter((model) => {
-                return model.model_id == translateParams.modelId;
-              });
-
-              if (modelId.length > 0) {
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                      msg.channel.send(
-                        `${msg.guild.member(
-                          msg.author.id
-                        )} sent message :flag_in: "${text}"`
-                      );
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              } else {
-                translateParams.modelId = `${lang}-en`;
-
-                translateText(translateParams)
-                  .then((text) => {
-                    if (text == args.slice(1).join(" ")) {
-                      console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result en: ${text}
-            `);
-                      notTranslated();
-                    } else {
-                      console.log(`
-            I iteration translate query ${lang}: ${args.slice(1).join(" ")}
-            I iteration translate result en: ${text}
-            `);
-
-                      translateParams.modelId = `en-${args[0].toLowerCase()}`;
-                      translateParams.text = text;
-
-                      translateText(translateParams)
-                        .then((res) => {
-                          if (res == text) {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            notTranslated();
-                          } else {
-                            console.log(`
-            II iteration translate query en: ${text}
-            II iteration translate result ${args[0].toLowerCase()}: ${res}
-            `);
-                            msg.channel.send(
-                              `${msg.guild.member(
-                                msg.author.id
-                              )} sent message :flag_in: "${res}"`
-                            );
-                          }
-                        })
-                        .catch((err) => {
-                          console.log("error:", err);
-                          notTranslated();
-                        });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error:", err);
-                    notTranslated();
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log("error:", err);
-              notTranslated();
-            });
-        })
-        .catch((err) => {
-          console.log("error:", err);
-          notTranslated();
-        });
       break;
     //! SPEECH-EN
     case commands[11]:
