@@ -43,6 +43,11 @@ const commands = [
   "ar",
   "ja",
   "hi",
+  "he",
+  "ko",
+  "pt",
+  "zh",
+  "uk",
   "speech-en",
 ];
 
@@ -317,6 +322,31 @@ client.on("message", (msg) => {
             inline: true,
           },
           {
+            name: ":flag_il:",
+            value: "!he + text translate to Hebrew",
+            inline: true,
+          },
+          {
+            name: ":flag_kr:",
+            value: "!ko + text translate to Korean",
+            inline: true,
+          },
+          {
+            name: ":flag_pt:",
+            value: "!pt + text translate to Portuguese",
+            inline: true,
+          },
+          {
+            name: ":flag_cn:",
+            value: "!zh + text translate to Chinese(Simplified)",
+            inline: true,
+          },
+          {
+            name: ":flag_ua:",
+            value: "!uk + text translate to Chinese(Simplified)",
+            inline: true,
+          },
+          {
             name: ":loudspeaker: :flag_us:",
             value: "!speech-en + text to translate and vocalize in English",
             inline: false,
@@ -433,8 +463,38 @@ client.on("message", (msg) => {
       masterTranslator(":flag_in:");
 
       break;
-    //! SPEECH-EN
+    //! HE
     case commands[11]:
+      msg.channel.bulkDelete(1);
+      masterTranslator(":flag_il:");
+
+      break;
+    //! KO
+    case commands[12]:
+      msg.channel.bulkDelete(1);
+      masterTranslator(":flag_kr:");
+
+      break;
+    //! PT
+    case commands[13]:
+      msg.channel.bulkDelete(1);
+      masterTranslator(":flag_pt:");
+
+      break;
+    //! ZH
+    case commands[14]:
+      msg.channel.bulkDelete(1);
+      masterTranslator(":flag_cn:");
+
+      break;
+    //! UK
+    case commands[15]:
+      msg.channel.bulkDelete(1);
+      masterTranslator(":flag_ua:");
+
+      break;
+    //! SPEECH-EN
+    case commands[16]:
       msg.channel.bulkDelete(1);
 
       detectLanguage()
@@ -532,14 +592,15 @@ client.on("message", (msg) => {
         });
       break;
     default:
-      msg.channel.bulkDelete(1);
-      msg
-        .reply(
-          `Type error or command !${args[0]} doesn't exist :face_with_monocle:`
-        )
-        .then((msg) => {
-          msg.delete({ timeout: 7000 });
-        });
+      // msg.channel.bulkDelete(1);
+      // msg
+      //   .reply(
+      //     `Type error or command !${args[0]} doesn't exist :face_with_monocle:`
+      //   )
+      //   .then((msg) => {
+      //     msg.delete({ timeout: 7000 });
+      //   });
+      return;
   }
 });
 
