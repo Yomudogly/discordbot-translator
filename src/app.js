@@ -364,50 +364,8 @@ client.on("message", (msg) => {
     //! EN
     case commands[1]:
       msg.channel.bulkDelete(1);
+      masterTranslator(":flag_us:");
 
-      detectLanguage()
-        .then((lang) => {
-          if (lang == args[0].toLowerCase()) {
-            msg
-              .reply(
-                ":flag_us: => :flag_us: = :see_no_evil: :hear_no_evil: :speak_no_evil:"
-              )
-              .then((msg) => {
-                msg.delete({ timeout: 7000 });
-              });
-            return;
-          }
-          translateParams.modelId = `${lang}-${args[0].toLowerCase()}`;
-
-          translateText(translateParams)
-            .then((text) => {
-              if (text == args.slice(1).join(" ")) {
-                console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                notTranslated();
-              } else {
-                console.log(`
-            translate query ${lang}: ${args.slice(1).join(" ")}
-            translate result ${args[0].toLowerCase()}: ${text}
-            `);
-                msg.channel.send(
-                  `${msg.guild.member(
-                    msg.author.id
-                  )} sent message :flag_us: "${text}"`
-                );
-              }
-            })
-            .catch((err) => {
-              console.log("error:", err);
-              notTranslated();
-            });
-        })
-        .catch((err) => {
-          console.log("error:", err);
-          notTranslated();
-        });
       break;
     //! RU
     case commands[2]:
