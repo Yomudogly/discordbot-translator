@@ -3,10 +3,10 @@ require("dotenv").config();
 const Discord = require("discord.js");
 const fs = require("fs");
 
-//* Create a new client using the new keyword
+//* Create a Discord client
 const client = new Discord.Client();
 
-//* Register IBM Translator API and Text-To-Speech API
+//* Register an IBM Translator API and Text-To-Speech API
 const LanguageTranslatorV3 = require("ibm-watson/language-translator/v3");
 const TextToSpeechV1 = require("ibm-watson/text-to-speech/v1");
 const { IamAuthenticator } = require("ibm-watson/auth");
@@ -66,6 +66,7 @@ client.on("reconnecting", () => {
 
 //* Check messages for a specific command
 client.on("message", (msg) => {
+  // * Common variables and functions
   let args = msg.content.substring(prefix.length).split(" ");
 
   let translateParams = {
@@ -248,6 +249,7 @@ client.on("message", (msg) => {
         return;
       });
 
+  // ! Personal messages prevention
   if (!msg.content.startsWith(prefix) || msg.author.bot) {
     if (!msg.guild && !msg.author.bot) {
       return msg.reply(
@@ -261,6 +263,8 @@ client.on("message", (msg) => {
       "Personal messages are not permitted :face_with_raised_eyebrow: If you want me to translate something send message in the server :v:"
     );
   }
+
+  // ! Commands implementation
   switch (args[0].toLowerCase()) {
     //! Info command
     case commands[0]:
@@ -535,7 +539,6 @@ client.on("message", (msg) => {
                   })
                   .catch((err) => {
                     console.log("error:", err);
-                    notVoice();
                   });
               }
             })
