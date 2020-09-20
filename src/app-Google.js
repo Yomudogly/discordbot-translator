@@ -213,77 +213,137 @@ client.on("message", (msg) => {
     //! EN
     case commands[1]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_us:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_us:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! RU
     case commands[2]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_ru:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_ru:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! ES
     case commands[3]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_es:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_es:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! TR
     case commands[4]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_tr:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_tr:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! FR
     case commands[5]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_fr:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_fr:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! IT
     case commands[6]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_it:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_it:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! DE
     case commands[7]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_de:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_de:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! AR
     case commands[8]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_sa:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_sa:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! JA
     case commands[9]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_jp:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_jp:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! HI
     case commands[10]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_in:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_in:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! HE
     case commands[11]:
       msg.channel.bulkDelete(1);
-      translate(text, "iw").then((result) => send(result, ":flag_il:"));
+      translate(text, "iw")
+        .then((result) => send(result, ":flag_il:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! KO
     case commands[12]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_kr:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_kr:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! PT
     case commands[13]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_pt:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_pt:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! ZH
     case commands[14]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_cn:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_cn:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! UK
     case commands[15]:
       msg.channel.bulkDelete(1);
-      translate(text, args[0]).then((result) => send(result, ":flag_ua:"));
+      translate(text, args[0])
+        .then((result) => send(result, ":flag_ua:"))
+        .catch((err) => {
+          console.error("error:", err);
+        });
       break;
     //! SPEECH-EN
     case commands[16]:
