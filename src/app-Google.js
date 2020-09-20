@@ -35,6 +35,42 @@ const commands = [
   "speech-en",
 ];
 
+// * Common functions
+let translate = (text, lang) =>
+  tr(text, lang)
+    .then((result) => {
+      result.hasCorrectedText
+        ? console.info(`
+      translate query ${result.src}: ${text}
+      translate query corrected: ${result.correctedText}
+      translate result en: ${result.text}
+      `)
+        : console.info(`
+      translate query ${result.src}: ${text}
+      translate result ${lang}: ${result.text}
+      `);
+      return result.text;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
+let speakText = async (text, audioPath, langCode) => {
+  const request = {
+    input: { text: text },
+    // Select the language and SSML voice gender (optional)
+    voice: { languageCode: langCode, ssmlGender: "NEUTRAL" },
+    // select the type of audio encoding
+    audioConfig: { audioEncoding: "MP3" },
+  };
+
+  const [response] = await TextToSpeech.synthesizeSpeech(request);
+  // Write the binary audio content to a local file
+  const writeFile = util.promisify(fs.writeFile);
+  await writeFile(audioPath, response.audioContent, "binary");
+  console.info(`audio written to file: ${audioPath}`);
+};
+
 //* Display a message once the bot has started
 client.once("ready", () => {
   client.user
@@ -52,48 +88,11 @@ client.on("reconnecting", () => {
 client.on("message", (msg) => {
   // * Common variables and functions
   let args = msg.content.substring(prefix.length).split(" ");
-
   let text = args.slice(1).join(" ");
-
-  let translate = (flag) =>
-    tr(text, args[0])
-      .then((result) => {
-        result.hasCorrectedText
-          ? console.info(`
-      translate query ${result.src}: ${text}
-      translate query corrected: ${result.correctedText}
-      translate result en: ${result.text}
-      `)
-          : console.info(`
-      translate query ${result.src}: ${text}
-      translate result ${args[0]}: ${result.text}
-      `);
-
-        msg.channel.send(
-          `${msg.guild.member(msg.author.id)} sent message ${flag} "${
-            result.text
-          }"`
-        );
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-
-  let speakText = async (text, audioPath, langCode) => {
-    const request = {
-      input: { text: text },
-      // Select the language and SSML voice gender (optional)
-      voice: { languageCode: langCode, ssmlGender: "NEUTRAL" },
-      // select the type of audio encoding
-      audioConfig: { audioEncoding: "MP3" },
-    };
-
-    const [response] = await TextToSpeech.synthesizeSpeech(request);
-    // Write the binary audio content to a local file
-    const writeFile = util.promisify(fs.writeFile);
-    await writeFile(audioPath, response.audioContent, "binary");
-    console.info(`audio written to file: ${audioPath}`);
-  };
+  let send = (result, flag) =>
+    msg.channel.send(
+      `${msg.guild.member(msg.author.id)} sent message ${flag} "${result}"`
+    );
 
   // ! Personal messages prevention
   if (!msg.content.startsWith(prefix) || msg.author.bot) {
@@ -214,132 +213,111 @@ client.on("message", (msg) => {
     //! EN
     case commands[1]:
       msg.channel.bulkDelete(1);
-      translate(":flag_us:");
+      translate(text, args[0]).then((result) => send(result, ":flag_us:"));
       break;
     //! RU
     case commands[2]:
       msg.channel.bulkDelete(1);
-      translate(":flag_ru:");
+      translate(text, args[0]).then((result) => send(result, ":flag_ru:"));
       break;
     //! ES
     case commands[3]:
       msg.channel.bulkDelete(1);
-      translate(":flag_es:");
+      translate(text, args[0]).then((result) => send(result, ":flag_es:"));
       break;
     //! TR
     case commands[4]:
       msg.channel.bulkDelete(1);
-      translate(":flag_tr:");
+      translate(text, args[0]).then((result) => send(result, ":flag_tr:"));
       break;
     //! FR
     case commands[5]:
       msg.channel.bulkDelete(1);
-      translate(":flag_fr:");
+      translate(text, args[0]).then((result) => send(result, ":flag_fr:"));
       break;
     //! IT
     case commands[6]:
       msg.channel.bulkDelete(1);
-      translate(":flag_it:");
+      translate(text, args[0]).then((result) => send(result, ":flag_it:"));
       break;
     //! DE
     case commands[7]:
       msg.channel.bulkDelete(1);
-      translate(":flag_de:");
+      translate(text, args[0]).then((result) => send(result, ":flag_de:"));
       break;
     //! AR
     case commands[8]:
       msg.channel.bulkDelete(1);
-      translate(":flag_sa:");
+      translate(text, args[0]).then((result) => send(result, ":flag_sa:"));
       break;
     //! JA
     case commands[9]:
       msg.channel.bulkDelete(1);
-      translate(":flag_jp:");
+      translate(text, args[0]).then((result) => send(result, ":flag_jp:"));
       break;
     //! HI
     case commands[10]:
       msg.channel.bulkDelete(1);
-      translate(":flag_in:");
+      translate(text, args[0]).then((result) => send(result, ":flag_in:"));
       break;
     //! HE
     case commands[11]:
-      args[0] = "iw";
       msg.channel.bulkDelete(1);
-      translate(":flag_il:");
+      translate(text, "iw").then((result) => send(result, ":flag_il:"));
       break;
     //! KO
     case commands[12]:
       msg.channel.bulkDelete(1);
-      translate(":flag_kr:");
+      translate(text, args[0]).then((result) => send(result, ":flag_kr:"));
       break;
     //! PT
     case commands[13]:
       msg.channel.bulkDelete(1);
-      translate(":flag_pt:");
+      translate(text, args[0]).then((result) => send(result, ":flag_pt:"));
       break;
     //! ZH
     case commands[14]:
       msg.channel.bulkDelete(1);
-      translate(":flag_cn:");
+      translate(text, args[0]).then((result) => send(result, ":flag_cn:"));
       break;
     //! UK
     case commands[15]:
       msg.channel.bulkDelete(1);
-      translate(":flag_ua:");
+      translate(text, args[0]).then((result) => send(result, ":flag_ua:"));
       break;
     //! SPEECH-EN
     case commands[16]:
       msg.channel.bulkDelete(1);
 
-      tr(text, "en")
-        .then((result) => {
-          result.hasCorrectedText
-            ? console.info(`
-      translate query ${result.src}: ${text}
-      translate query corrected: ${result.correctedText}
-      translate result en: ${result.text}
-      `)
-            : console.info(`
-      translate query ${result.src}: ${text}
-      translate result en: ${result.text}
-      `);
+      translate(text, "en").then((result) => {
+        let audioPath = `./${result.substring(0, 10).split(" ").join("_")}.mp3`;
 
-          audioPath = `./${result.text
-            .substring(0, 10)
-            .split(" ")
-            .join("_")}.mp3`;
-
-          speakText(result.text, audioPath, "en-US")
-            .then(() => {
-              msg.channel
-                .send(
-                  `${msg.guild.member(
-                    msg.author.id
-                  )} sent message with audio transcription :flag_us: "${
-                    result.text
-                  }"`,
-                  {
-                    files: [audioPath],
+        speakText(result, audioPath, "en-US")
+          .then(() => {
+            msg.channel
+              .send(
+                `${msg.guild.member(
+                  msg.author.id
+                )} sent message with audio transcription :flag_us: "${result}"`,
+                {
+                  files: [audioPath],
+                }
+              )
+              .then(() => {
+                fs.unlink(audioPath, (err) => {
+                  if (err) {
+                    console.error(err);
+                    return;
                   }
-                )
-                .then(() => {
-                  fs.unlink(audioPath, (err) => {
-                    if (err) {
-                      console.error(err);
-                      return;
-                    }
-                    //file removed
-                  });
-                  console.info(`file ${audioPath} deleted`);
+                  //file removed
                 });
-            })
-            .catch((err) => {
-              console.error("error:", err);
-            });
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+                console.info(`file ${audioPath} deleted`);
+              });
+          })
+          .catch((err) => {
+            console.error("error:", err);
+          });
+      });
 
       break;
     default:
