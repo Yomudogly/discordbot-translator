@@ -43,7 +43,7 @@ let translate = (text, lang) =>
         ? console.info(`
       translate query ${result.src}: ${text}
       translate query corrected: ${result.correctedText}
-      translate result en: ${result.text}
+      translate result ${lang}: ${result.text}
       `)
         : console.info(`
       translate query ${result.src}: ${text}
